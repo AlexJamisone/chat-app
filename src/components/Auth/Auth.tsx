@@ -26,7 +26,7 @@ const Auth: React.FunctionComponent<IAuthProps> = ({
 		try {
 			//CreateUsername Mutation to send our username to GraphQL API
 		} catch (error) {
-			console.log('onSubmit error', error);
+			console.log('onSubmit error', error)
 		}
 	}
 
@@ -35,13 +35,15 @@ const Auth: React.FunctionComponent<IAuthProps> = ({
 			<Stack align="center" spacing={5}>
 				{session ? (
 					<>
-						<Text fontSize='3xl'>Create a Username</Text>
+						<Text fontSize="3xl">Create a Username</Text>
 						<Input
 							placeholder="Enter a username"
 							value={username}
 							onChange={(e) => setUsername(e.target.value)}
 						/>
-						<Button width='100%' onClick={onSubmit}>Save</Button>
+						<Button width="100%" onClick={onSubmit}>
+							Save
+						</Button>
 					</>
 				) : (
 					<>

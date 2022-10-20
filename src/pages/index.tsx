@@ -13,7 +13,15 @@ const Home: NextPage = () => {
 
 	const reloadSession = () => {}
 
-	return <Box>{session?.user.username ? <Chat /> : <Auth session={session} reloadSession={reloadSession}/>}</Box>
+	return (
+		<Box>
+			{session?.user.username ? (
+				<Chat />
+			) : (
+				<Auth session={session} reloadSession={reloadSession} />
+			)}
+		</Box>
+	)
 }
 
 export async function getServerSideProps(context: NextPageContext) {
