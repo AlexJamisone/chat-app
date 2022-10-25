@@ -6,6 +6,7 @@ interface IChatProps {}
 const Chat: React.FC<IChatProps> = (props) => {
 	return (
 		<div>
+			<h1>Chat</h1>
 			<Button onClick={() => signOut()}>LogOut</Button>
 		</div>
 	)

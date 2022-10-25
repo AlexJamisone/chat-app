@@ -11,7 +11,10 @@ const Home: NextPage = () => {
 	const { data: session } = useSession()
 	console.log('Here is Session', session)
 
-	const reloadSession = () => {}
+	const reloadSession = () => {
+		const event = new Event("visibilitychange");
+		document.dispatchEvent(event)
+	}
 
 	return (
 		<Box>
