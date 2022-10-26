@@ -1,7 +1,6 @@
 import { Box } from '@chakra-ui/react'
 import type { NextPage, NextPageContext } from 'next'
 import { getSession, useSession } from 'next-auth/react'
-import { Session } from 'next-auth'
 
 //Component
 import Auth from '../components/Auth/Auth'
