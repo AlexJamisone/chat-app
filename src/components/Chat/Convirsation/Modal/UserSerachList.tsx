@@ -3,11 +3,12 @@ import { FC } from 'react'
 import user from '../../../../graphql/operations/user'
 import { SearchedUser } from '../../../../utils/types'
 
-type UserSearchListProps = {
+interface UserSearchListProps {
 	users: Array<SearchedUser>
+	addParticipent: (user: SearchedUser) => void
 }
 
-const UserSerachList: FC<UserSearchListProps> = ({ users }) => {
+const UserSerachList: FC<UserSearchListProps> = ({ users, addParticipent }) => {
 	return (
 		<>
 			{users.length === 0 ? (
@@ -39,7 +40,7 @@ const UserSerachList: FC<UserSearchListProps> = ({ users }) => {
 								<Button
 									bg="brand.100"
 									_hover={{ bg: 'brand.100' }}
-									onClick={() => {}}
+									onClick={() => addParticipent(user)}
 								>
 									Select
 								</Button>

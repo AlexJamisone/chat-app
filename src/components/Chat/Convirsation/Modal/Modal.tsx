@@ -12,7 +12,12 @@ import {
 } from '@chakra-ui/react'
 import React, { FC, useState } from 'react'
 import UserOperation from '../../../../graphql/operations/user'
-import { SearchUserData, SerachUsersInput } from '../../../../utils/types'
+import {
+	SearchedUser,
+	SearchUserData,
+	SerachUsersInput,
+} from '../../../../utils/types'
+import Participants from './Participants'
 import UserSerachList from './UserSerachList'
 
 interface ModalProps {
@@ -22,6 +27,7 @@ interface ModalProps {
 
 const ConversationModal: FC<ModalProps> = ({ isOpen, onClose }) => {
 	const [username, setUsername] = useState('')
+	const [participants, setParticipants] = useState<Array<SearchedUser>>([])
 	const [searchUsers, { data, loading, error }] = useLazyQuery<
 		SearchUserData,
 		SerachUsersInput
@@ -34,6 +40,16 @@ const ConversationModal: FC<ModalProps> = ({ isOpen, onClose }) => {
 		searchUsers({ variables: { username } })
 		console.log('Inside on submit', username)
 	}
+
+	const addParticipent = (user: SearchedUser) => {
+		setParticipants((prev) => [...prev, user])
+		setUsername('')
+	}
+
+	const removeParticipant = (userId: string) => {
+		setParticipants((prev) => prev.filter((p) => p.id !== userId))
+	}
+
 	return (
 		<>
 			<Modal isOpen={isOpen} onClose={onClose}>
@@ -60,7 +76,18 @@ const ConversationModal: FC<ModalProps> = ({ isOpen, onClose }) => {
 								</Button>
 							</Stack>
 						</form>
-						{ data?.searchUsers && <UserSerachList users={data?.searchUsers}/>}
+						{data?.searchUsers && (
+							<UserSerachList
+								users={data?.searchUsers}
+								addParticipent={addParticipent}
+							/>
+						)}
+						{participants.length !== 0 && (
+							<Participants
+								participants={participants}
+								removeParticipant={removeParticipant}
+							/>
+						)}
 					</ModalBody>
 				</ModalContent>
 			</Modal>
