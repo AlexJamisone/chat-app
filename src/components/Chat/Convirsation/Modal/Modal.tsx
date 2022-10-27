@@ -9,6 +9,7 @@ import {
 	Stack,
 	Input,
 	Button,
+	useToast,
 } from '@chakra-ui/react'
 import React, { FC, useState } from 'react'
 import UserOperation from '../../../../graphql/operations/user'
@@ -28,12 +29,25 @@ interface ModalProps {
 const ConversationModal: FC<ModalProps> = ({ isOpen, onClose }) => {
 	const [username, setUsername] = useState('')
 	const [participants, setParticipants] = useState<Array<SearchedUser>>([])
+	const toast = useToast()
 	const [searchUsers, { data, loading, error }] = useLazyQuery<
 		SearchUserData,
 		SerachUsersInput
 	>(UserOperation.Queries.searchUsers)
 
-	console.log('Here is a search Data', data)
+	const onCreateConversation = async () => {
+		try {
+			//Create conversation mutation
+		} catch (error) {
+			console.log('onCreateConversation error', error)
+			toast({
+				title: `Error create conversation: ${error}`,
+				status: 'error',
+				duration: 4000,
+				isClosable: true
+			})
+		}
+	}
 
 	const onSearch = (e: React.FormEvent) => {
 		e.preventDefault()
@@ -50,11 +64,13 @@ const ConversationModal: FC<ModalProps> = ({ isOpen, onClose }) => {
 		setParticipants((prev) => prev.filter((p) => p.id !== userId))
 	}
 
+
+
 	return (
 		<>
 			<Modal isOpen={isOpen} onClose={onClose}>
 				<ModalOverlay />
-				<ModalContent bg="#2d2d2d">
+				<ModalContent bg="#2d2d2d" pb={4}>
 					<ModalHeader>Create a Conversation</ModalHeader>
 					<ModalCloseButton />
 					<ModalBody>
@@ -83,10 +99,21 @@ const ConversationModal: FC<ModalProps> = ({ isOpen, onClose }) => {
 							/>
 						)}
 						{participants.length !== 0 && (
-							<Participants
-								participants={participants}
-								removeParticipant={removeParticipant}
-							/>
+							<>
+								<Participants
+									participants={participants}
+									removeParticipant={removeParticipant}
+								/>
+								<Button
+									bg="brand.100"
+									width="100%"
+									mt={6}
+									_hover={{ bg: 'brand.100' }}
+									onClick={() => {}}
+								>
+									Create Conversation
+								</Button>
+							</>
 						)}
 					</ModalBody>
 				</ModalContent>
