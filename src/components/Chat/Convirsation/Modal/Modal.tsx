@@ -1,4 +1,4 @@
-import { useLazyQuery } from '@apollo/client'
+import { useLazyQuery, useMutation } from '@apollo/client'
 import {
 	Modal,
 	ModalOverlay,
@@ -13,20 +13,27 @@ import {
 } from '@chakra-ui/react'
 import React, { FC, useState } from 'react'
 import UserOperation from '../../../../graphql/operations/user'
+import ConversationOperation from '../../../../graphql/operations/conversation'
 import {
+	CreateConversationData,
+	CreateConversationInput,
 	SearchedUser,
 	SearchUserData,
 	SerachUsersInput,
 } from '../../../../utils/types'
 import Participants from './Participants'
 import UserSerachList from './UserSerachList'
+import { Session } from 'next-auth'
 
 interface ModalProps {
+	session: Session
 	isOpen: boolean
 	onClose: () => void
 }
 
-const ConversationModal: FC<ModalProps> = ({ isOpen, onClose }) => {
+const ConversationModal: FC<ModalProps> = ({ session, isOpen, onClose }) => {
+	const {user: {id: userId}} = session
+
 	const [username, setUsername] = useState('')
 	const [participants, setParticipants] = useState<Array<SearchedUser>>([])
 	const toast = useToast()
@@ -34,17 +41,28 @@ const ConversationModal: FC<ModalProps> = ({ isOpen, onClose }) => {
 		SearchUserData,
 		SerachUsersInput
 	>(UserOperation.Queries.searchUsers)
+	const [createConversation, { loading: createConversationLoading }] =
+		useMutation<CreateConversationData, CreateConversationInput>(
+			ConversationOperation.Mutations.createConversation
+		)
 
 	const onCreateConversation = async () => {
-		try {
-			//Create conversation mutation
+		const participantIds = [userId, ...participants.map((p) => p.id)]
+		try { 
+			console.log('onCreateConversation fun', participantIds)
+			const {data} = await createConversation({
+				variables: {
+					participantIds,
+				},
+			})
+			console.log('Here is DATA', data);
 		} catch (error) {
 			console.log('onCreateConversation error', error)
 			toast({
 				title: `Error create conversation: ${error}`,
 				status: 'error',
 				duration: 4000,
-				isClosable: true
+				isClosable: true,
 			})
 		}
 	}
@@ -63,8 +81,6 @@ const ConversationModal: FC<ModalProps> = ({ isOpen, onClose }) => {
 	const removeParticipant = (userId: string) => {
 		setParticipants((prev) => prev.filter((p) => p.id !== userId))
 	}
-
-
 
 	return (
 		<>
@@ -109,7 +125,8 @@ const ConversationModal: FC<ModalProps> = ({ isOpen, onClose }) => {
 									width="100%"
 									mt={6}
 									_hover={{ bg: 'brand.100' }}
-									onClick={() => {}}
+									onClick={onCreateConversation}
+									isLoading={createConversationLoading}
 								>
 									Create Conversation
 								</Button>

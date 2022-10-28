@@ -7,7 +7,7 @@ type ConversationListPorps = {
 	session: Session
 }
 
-const ConversationList: FC<ConversationListPorps> = () => {
+const ConversationList: FC<ConversationListPorps> = ({ session }) => {
     const [isOpen, setIsOpen] = useState(false)
     const onOpen = () => setIsOpen(true)
     const onClose = () => setIsOpen(false)
@@ -24,7 +24,7 @@ const ConversationList: FC<ConversationListPorps> = () => {
 			>
 				<Text textAlign='center' color='whiteAlpha.800' fontWeight={500}>Find or start converstation</Text>
 			</Box>
-            <ConversationModal isOpen={isOpen} onClose={onClose}/>
+            <ConversationModal session={session} isOpen={isOpen} onClose={onClose}/>
 		</Box>
 	)
 }
