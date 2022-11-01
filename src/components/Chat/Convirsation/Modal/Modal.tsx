@@ -24,6 +24,7 @@ import {
 import Participants from './Participants'
 import UserSerachList from './UserSerachList'
 import { Session } from 'next-auth'
+import { useRouter } from 'next/router'
 
 interface ModalProps {
 	session: Session
@@ -32,7 +33,11 @@ interface ModalProps {
 }
 
 const ConversationModal: FC<ModalProps> = ({ session, isOpen, onClose }) => {
-	const {user: {id: userId}} = session
+	const {
+		user: { id: userId },
+	} = session
+
+	const router = useRouter()
 
 	const [username, setUsername] = useState('')
 	const [participants, setParticipants] = useState<Array<SearchedUser>>([])
@@ -48,14 +53,22 @@ const ConversationModal: FC<ModalProps> = ({ session, isOpen, onClose }) => {
 
 	const onCreateConversation = async () => {
 		const participantIds = [userId, ...participants.map((p) => p.id)]
-		try { 
-			console.log('onCreateConversation fun', participantIds)
-			const {data} = await createConversation({
+		try {
+			const { data } = await createConversation({
 				variables: {
 					participantIds,
 				},
 			})
-			console.log('Here is DATA', data);
+			if (!data?.createConversation) {
+				throw new Error('Faild to create conversation')
+			}
+			const {
+				createConversation: { conversationId },
+			} = data
+			router.push({ query: { conversationId } })
+			setParticipants([])
+			setUsername('')
+			onClose()
 		} catch (error) {
 			console.log('onCreateConversation error', error)
 			toast({
@@ -70,7 +83,6 @@ const ConversationModal: FC<ModalProps> = ({ session, isOpen, onClose }) => {
 	const onSearch = (e: React.FormEvent) => {
 		e.preventDefault()
 		searchUsers({ variables: { username } })
-		console.log('Inside on submit', username)
 	}
 
 	const addParticipent = (user: SearchedUser) => {
