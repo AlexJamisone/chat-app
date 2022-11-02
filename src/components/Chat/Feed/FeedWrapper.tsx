@@ -21,7 +21,7 @@ const FeedWrapper: FC<FeedWrapperProps> = ({ session }) => {
 					{conversationId}
 				</Flex>
 			) : (
-				<div>No Conversation Selected</div>
+				<div>No Conversation Selected</div> 
 			)}
 		</Flex>
 	)
