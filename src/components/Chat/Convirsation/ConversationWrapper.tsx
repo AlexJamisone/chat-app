@@ -4,6 +4,7 @@ import { Session } from 'next-auth'
 import { FC } from 'react'
 import ConversationList from './ConversationList'
 import ConversationOperations from '../../../graphql/operations/conversation'
+import { ConversationData } from '../../../utils/types'
 
 interface ConversationWrapperProps {
 	session: Session
@@ -14,7 +15,9 @@ const ConversationWrapper: FC<ConversationWrapperProps> = ({ session }) => {
 		data: conversationData,
 		error: conversationError,
 		loading: conversationLoading,
-	} = useQuery(ConversationOperations.Queries.conversations)
+	} = useQuery<ConversationData, null>(
+		ConversationOperations.Queries.conversations
+	)
 	console.log(`HERE IS DATA`, conversationData)
 	return (
 		<Box
@@ -24,7 +27,10 @@ const ConversationWrapper: FC<ConversationWrapperProps> = ({ session }) => {
 			px={3}
 		>
 			{/* Sceleton Loader */}
-			<ConversationList session={session} />
+			<ConversationList
+				session={session}
+				conversations={conversationData?.conversations || []}
+			/>
 		</Box>
 	)
 }
