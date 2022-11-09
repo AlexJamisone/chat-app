@@ -1,45 +1,53 @@
 /* eslint-disable import/no-anonymous-default-export */
-import {gql} from '@apollo/client'
+import { gql } from '@apollo/client'
 
 const ConversationFields = `
-    conversations {
-        id
-        participants {
-            user {
-                id
-                username
-            }
-            hasSeenLatestMessage
-        }
-        latestMessage {
+    id
+    participants {
+        user {
             id
-            sender {
-                id
-                username
-            }
-            body
-            createdAt
+            username
         }
-        updatedAt
+        hasSeenLatestMessage
     }
+    latestMessage {
+        id
+        sender {
+            id
+            username
+        }
+        body
+        createdAt
+    }
+    updatedAt
 `
 
 export default {
-    Queries: {
-        conversations: gql`
+	Queries: {
+		conversations: gql`
             query Conversations {
-                ${ConversationFields}
-            }
-        `
-    },
-    Mutations: {
-        createConversation: gql`
-            mutation CreateConversation($participantIds: [String]!) {
-                createConversation(participantIds: $participantIds) {
-                    conversationId
+                conversations {
+                    ${ConversationFields}
                 }
             }
-        `
-    },
-    Subscriptions: {}
+        `,
+	},
+	Mutations: {
+		createConversation: gql`
+			mutation CreateConversation($participantIds: [String]!) {
+				createConversation(participantIds: $participantIds) {
+					conversationId
+				}
+			}
+		`,
+	},
+	Subscriptions: {
+		conversationCreated: gql`
+            subscription ConversationCreated {
+                conversationCreated {
+                    ${ConversationFields}
+                }
+            }
+        `,
+	},
 }
